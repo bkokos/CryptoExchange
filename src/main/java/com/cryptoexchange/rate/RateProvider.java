@@ -14,6 +14,7 @@ import java.net.URI;
 import java.util.List;
 import java.util.Map;
 
+import static com.cryptoexchange.json.JsonParser.parseRatesResponse;
 import static java.text.MessageFormat.format;
 
 @Slf4j
@@ -43,10 +44,7 @@ public class RateProvider {
 
 		JSONObject response = restTemplate.getForObject(URI.create(format(ratesUrl, baseCurrencyDef.getId(), vsCurrencies)), JSONObject.class);
 
-		JSONObject formattedResponse = new JSONObject();
-		formattedResponse.put(baseCurrencyDef.getSymbol(), response.get(baseCurrencyDef.getId())); // TODO: move to formatter service
-
-		return formattedResponse;
+		return parseRatesResponse(baseCurrencyDef, response);
 	}
 
 }

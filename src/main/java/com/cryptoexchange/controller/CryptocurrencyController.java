@@ -7,12 +7,12 @@ import lombok.RequiredArgsConstructor;
 import org.json.simple.JSONObject;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.math.BigDecimal;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -31,11 +31,11 @@ public class CryptocurrencyController {
 		return rateProvider.getRatesForCurrency(currency, filters);
 	}
 
-	@GetMapping("/exchange")
-	public JSONObject getExchangeRate() {
-		Map<String, ExchangeRateData> exchangeRates = exchangeRateProvider.getExchangeRates("BTC", Arrays.asList("ETH,PLN"), BigDecimal.valueOf(12));
+	@PostMapping("/exchange")
+	public JSONObject getExchangeRate(@RequestParam String from, @RequestParam List<String> to, @RequestParam String amount) {
+		Map<String, ExchangeRateData> exchangeRates = exchangeRateProvider.getExchangeRates(from, to, new BigDecimal(amount));
 		JSONObject response = new JSONObject();
-		response.put("BTC", exchangeRates);
+		response.put(from, exchangeRates);
 
 		return response;
 	}

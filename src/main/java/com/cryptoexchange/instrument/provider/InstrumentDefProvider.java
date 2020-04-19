@@ -23,7 +23,6 @@ public class InstrumentDefProvider {
 	private String coinsUrl;
 
 	public Map<String, InstrumentDefinition> getInstrumentDefinitions() {
-		System.out.println(coinsUrl);
 		ResponseEntity<List<InstrumentDefinition>> response =
 				restTemplate.exchange(coinsUrl, HttpMethod.GET, null, new ParameterizedTypeReference<List<InstrumentDefinition>>() {
 				});

@@ -1,42 +1,34 @@
 package com.cryptoexchange.json;
 
+import com.cryptoexchange.exchange.data.ExchangeRateData;
+import com.cryptoexchange.instrument.InstrumentDefinition;
 import org.json.simple.JSONObject;
 import org.junit.Test;
 
 import java.math.BigDecimal;
-import java.util.LinkedHashMap;
+import java.util.HashMap;
 import java.util.Map;
 
 import static java.math.BigDecimal.valueOf;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 public class JsonParserTest {
 
 	@Test
-	public void shouldParseJSONForRatesResponse() {
-		BigDecimal ethRate = valueOf(0.21);
-		BigDecimal litRate = valueOf(0.43);
-		BigDecimal plnRate = valueOf(34.24);
-		BigDecimal usdRate = valueOf(23450.21);
-		BigDecimal usdtRate = valueOf(56767540.21);
+	public void parseValuesToBigDecimals() {
+		Map<String, Number> valuesToMap = new HashMap<>();
+		valuesToMap.put("BTC", 2345);
+		valuesToMap.put("ETH", 234.54);
 
-		Map<String, BigDecimal> rates = new LinkedHashMap<>();
-		rates.put("ETH", ethRate);
-		rates.put("LIT", litRate);
-		rates.put("PLN", plnRate);
-		rates.put("USD", usdRate);
-		rates.put("USDT", usdtRate);
+		JSONObject josn = new JSONObject(valuesToMap);
+		Map<String, BigDecimal> stringBigDecimalMap = JsonParser.parseValuesToBigDecimals(josn);
 
-		JSONObject response = JsonParser.parseRateResponse("BTC", rates);
+		assertTrue(stringBigDecimalMap.containsKey("BTC"));
+		assertTrue(stringBigDecimalMap.containsKey("ETH"));
 
-		assertEquals(response.get("source"), "BTC");
-
-		JSONObject ratesFromJson = (JSONObject) response.get("rates");
-
-		assertEquals(ratesFromJson.get("ETH"), ethRate);
-		assertEquals(ratesFromJson.get("LIT"), litRate);
-		assertEquals(ratesFromJson.get("PLN"), plnRate);
-		assertEquals(ratesFromJson.get("USD"), usdRate);
-		assertEquals(ratesFromJson.get("USDT"), usdtRate);
+		assertEquals(stringBigDecimalMap.get("BTC"), new BigDecimal("2345"));
+		assertEquals(stringBigDecimalMap.get("ETH"), new BigDecimal("234.54"));
 	}
+
 }

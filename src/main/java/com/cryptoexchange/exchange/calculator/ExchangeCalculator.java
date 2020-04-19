@@ -10,8 +10,6 @@ import java.math.RoundingMode;
  * Exchange calculator with precision to 1 satoshi = 0.00000001 BTC.
  */
 public class ExchangeCalculator {
-
-	private static final MathContext mc = new MathContext(8, RoundingMode.HALF_UP);
 	private static final BigDecimal FEE = new BigDecimal("0.01");
 
 	public static ExchangeRateData calculate(BigDecimal rate, BigDecimal amount) {
@@ -23,9 +21,9 @@ public class ExchangeCalculator {
 	}
 
 	private static BigDecimal calculateResult(BigDecimal rate, BigDecimal amount) {
-		return rate.multiply(amount, mc);
+		return rate.multiply(amount, MathContext.DECIMAL128).setScale(8, RoundingMode.HALF_UP);
 	}
 	private static BigDecimal calculateFee(BigDecimal value) {
-		return value.multiply(FEE, mc);
+		return value.multiply(FEE, MathContext.DECIMAL128).setScale(8, RoundingMode.HALF_UP);
 	}
 }
