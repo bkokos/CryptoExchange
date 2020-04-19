@@ -6,14 +6,15 @@ import com.cryptoexchange.instrument.provider.SupportedCurrenciesProvider;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.json.simple.JSONObject;
-import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.ResponseEntity;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import java.net.URI;
 import java.util.List;
 import java.util.Map;
+
+import static java.text.MessageFormat.format;
 
 @Slf4j
 @Service
@@ -25,6 +26,9 @@ public class RateProvider {
 
 	private final RestTemplate restTemplate;
 
+	@Value("${cryptocurrency.api.url}${cryptocurrency.api.rate}")
+	String ratesUrl;
+
 	public JSONObject getRatesForCurrency(String currency, List<String> filters) {
 
 		String vsCurrencies = "";
@@ -33,19 +37,16 @@ public class RateProvider {
 		} else {
 			vsCurrencies = String.join(",", filters);
 		}
-		log.info("Start");
+
 		Map<String, InstrumentDefinition> instrumentDefinitions = instrumentDefProvider.getInstrumentDefinitions();
-		log.info("Stop");
 		InstrumentDefinition baseCurrencyDef = instrumentDefinitions.get(currency.toLowerCase());
 
-		ResponseEntity<JSONObject> response = restTemplate
-				.exchange("https://api.coingecko.com/api/v3/simple/price?ids=" + baseCurrencyDef.getId() + "&vs_currencies=" + vsCurrencies
-						, HttpMethod.GET
-						, null
-						, new ParameterizedTypeReference<JSONObject>() {
-						});
+		JSONObject response = restTemplate.getForObject(URI.create(format(ratesUrl, baseCurrencyDef.getId(), vsCurrencies)), JSONObject.class);
 
-		return response.getBody();
+		JSONObject formattedResponse = new JSONObject();
+		formattedResponse.put(baseCurrencyDef.getSymbol(), response.get(baseCurrencyDef.getId())); // TODO: move to formatter service
+
+		return formattedResponse;
 	}
 
 }

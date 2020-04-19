@@ -2,3 +2,5 @@ cryptocurrency:
   api:
     url: "https://api.coingecko.com/api/v3"
     coins: "/coins/list"
+    rate: "/simple/price?ids={0}&vs_currencies={1}"
+    supported-currencies: "/simple/supported_vs_currencies"

@@ -3,6 +3,7 @@ package com.cryptoexchange.json;
 import org.json.simple.JSONObject;
 
 import java.math.BigDecimal;
+import java.util.HashMap;
 import java.util.Map;
 
 public class JsonParser {
@@ -17,10 +18,18 @@ public class JsonParser {
 		return response;
 	}
 
-	public static JSONObject parseExchangeResponse(String baseCurrency){
+	public static JSONObject parseExchangeResponse(String baseCurrency) {
 		JSONObject response = new JSONObject();
 		response.put("from", baseCurrency);
 
 		return response;
+	}
+
+	public static Map<String, BigDecimal> parseValuesToBigDecimals(JSONObject json) {
+		Map<String, BigDecimal> results = new HashMap<>();
+		json.keySet().forEach(
+				k -> results.put(String.valueOf(k), new BigDecimal(String.valueOf(json.get(k)))));
+
+		return results;
 	}
 }

@@ -2,6 +2,7 @@ package com.cryptoexchange.instrument.provider;
 
 import com.cryptoexchange.instrument.InstrumentDefinition;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
@@ -18,9 +19,13 @@ public class InstrumentDefProvider {
 
 	private final RestTemplate restTemplate;
 
+	@Value("${cryptocurrency.api.url}${cryptocurrency.api.coins}")
+	private String coinsUrl;
+
 	public Map<String, InstrumentDefinition> getInstrumentDefinitions() {
+		System.out.println(coinsUrl);
 		ResponseEntity<List<InstrumentDefinition>> response =
-				restTemplate.exchange("https://api.coingecko.com/api/v3/coins/list", HttpMethod.GET, null, new ParameterizedTypeReference<List<InstrumentDefinition>>() {
+				restTemplate.exchange(coinsUrl, HttpMethod.GET, null, new ParameterizedTypeReference<List<InstrumentDefinition>>() {
 				});
 		List<InstrumentDefinition> instrumentDefinitions = response.getBody();
 
